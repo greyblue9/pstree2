@@ -1,0 +1,37 @@
+
+VPATH := @srcdir@/
+srcdir := @srcdir@
+builddir := @builddir@
+LDLIBS := -lncursesw -ltinfo -lncursesw -ltinfo -pthread $(LDLIBS) $(LDADD)
+
+SOURCES := $(shell find $(srcdir) "(" -name "*.c" -o -name "*.c[cxp]" -o -name "*.c[cxp][xcp]" ")")
+$(info  SOURCES := $(SOURCES))
+
+MAIN_SOURCES := $(shell find $(srcdir) -name "*.c" -exec grep -Fwle main -- "{}" +; )
+$(info  MAIN_SOURCES := $(MAIN_SOURCES))
+
+   
+OBJECTS := $(subst $(srcdir),$(builddir),$(subst .c ,.o ,$(SOURCES) ))
+$(info  OBJECTS := $(OBJECTS))
+
+MAIN_OBJECTS := $(subst $(srcdir),$(builddir),$(subst .c ,.o ,$(MAIN_SOURCES) ))
+$(info  MAIN_OBJECTS := $(MAIN_OBJECTS))
+
+  
+$(builddir)/%.o: $(srcdir)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c -o $(@) $(^)
+
+$(builddir)/%: $(builddir)/%.o $(OBJECTS)
+	@mkdir -p $(@D)
+	$(CXX) $(LDFLAGS) -o $(firstword $(@)) $(firstword $(^)) -Wl,--start-group,--as-needed $(OBJECTS) -Wl,--end-group" $(LDFLAGS) $(LDLIBS)
+	chmod 0755 $(firstword $(@))
+
+   
+  
+MAIN_PROGRAMS := $(subst $(builddir),$(builddir),$(subst .o , ,$(MAIN_OBJECTS) ))
+
+all: $(MAIN_PROGRAMS) $(MAIN_OBJECTS)
+
+.PHONY: all install
+

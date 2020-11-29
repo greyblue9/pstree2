@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: [ master ]
 
+
 jobs:
   build:
 
@@ -13,10 +14,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-#   - name: configure
-#     run: ./configure
+    - name: setup
+      run: sudo apt-get install -y libncurses-dev
+    - name: configure
+      run: chmod 0755 configure && mkdir build && cd build && $PWD/../configure
     - name: make
-      run: make
+      run: cd build && make
 
 
 #

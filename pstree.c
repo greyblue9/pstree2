@@ -151,6 +151,8 @@ int snprintf(char *, int, char *, ...);
 #include <sys/ioctl.h>		/* For TIOCGSIZE/TIOCGWINSZ */
 /* #include <termios.h> */
 
+#define DEBUG
+#undef _NDEBUG
 #ifdef DEBUG
 # include <errno.h>
 #endif
@@ -217,6 +219,7 @@ static int compress = FALSE;
 #ifdef DEBUG
 static int debug = FALSE;
 #endif
+static int align = FALSE;
 
 struct Proc {
   long uid, pid, ppid, pgid;
@@ -764,7 +767,7 @@ static void Usage(void) {
 	  "[-d] "
 #endif
 	  "[-f file] [-g n] [-l n] [-u user] [-U] [-s string] [-p pid] [-w] [pid ...]\n"
-	  /*"   -a        align output\n"*/
+	  "   -a        align output\n"
 #ifdef DEBUG
 	  "   -d        print debugging info to stderr\n"
 #endif
@@ -791,7 +794,7 @@ int main(int argc, char **argv) {
   extern char *optarg;
   int ch;
   long pid;
-  int graph = G_ASCII, wide = FALSE;
+  int graph = G_ASCII, wide = TRUE;
   
   C = &TreeChars[graph];
   
@@ -799,10 +802,10 @@ int main(int argc, char **argv) {
   Progname = (NULL == Progname) ? argv[0] : Progname + 1;
   
   while ((ch = getopt(argc, argv, "cdf:g:hl:p:s:u:Uw?")) != EOF)
-    switch(ch) {
-      /*case 'a':
-	align   = TRUE;
-	break;*/
+  switch(ch) {
+    case 'a':
+	    align   = TRUE;
+	    break;
     case 'c':
       compress = TRUE;
       break;
@@ -862,7 +865,7 @@ int main(int argc, char **argv) {
       Usage();
       break;
     }
-  
+#define USE_GetProcessesDirect
 #ifdef USE_GetProcessesDirect
   NProc = input == NULL ? GetProcessesDirect() : GetProcesses();
 #else

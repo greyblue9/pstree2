@@ -200,7 +200,7 @@ typedef struct selection_node {
 
 typedef struct sort_node {
   struct sort_node *next;
-  int (*sr)(const proc_t* P, const proc_t* Q); /* sort function */
+  int (*sr)(proc_t* P, proc_t* Q); /* sort function */
   int reverse;   /* can sort backwards */
   int typecode;
   int need;
@@ -209,7 +209,7 @@ typedef struct sort_node {
 typedef struct format_node {
   struct format_node *next;
   char *name;                             /* user can override default name */
-  int (*pr)(char *restrict const outbuf, const proc_t *restrict const pp); // print function
+  int (*pr)(char *restrict outbuf, proc_t *restrict pp); // print function
 /*  int (* const sr)(const proc_t* P, const proc_t* Q); */ /* sort function */
   int width;
   int need;
@@ -219,33 +219,33 @@ typedef struct format_node {
 } format_node;
 
 typedef struct format_struct {
-  const char *spec; /* format specifier */
-  const char *head; /* default header in the POSIX locale */
-  int (* const pr)(char *restrict const outbuf, const proc_t *restrict const pp); // print function
-  int (* const sr)(const proc_t* P, const proc_t* Q); /* sort function */
-  const int width;
-  const int need;       /* data we will need (files to read, etc.) */
-  const int vendor; /* Where does this come from? */
-  const int flags;
+  char *spec; /* format specifier */
+  char *head; /* default header in the POSIX locale */
+  int (* pr)(char *restrict outbuf, proc_t *restrict pp); // print function
+  int (* sr)(proc_t* P, proc_t* Q); /* sort function */
+  int width;
+  int need;       /* data we will need (files to read, etc.) */
+  int vendor; /* Where does this come from? */
+  int flags;
 } format_struct;
 
 /* though ps-specific, needed by general file */
 typedef struct macro_struct {
-  const char *spec; /* format specifier */
-  const char *head; /* default header in the POSIX locale */
+  char *spec; /* format specifier */
+  char *head; /* default header in the POSIX locale */
 } macro_struct;
 
 /**************** PS TYPEDEF ***********************/
 
 typedef struct aix_struct {
-  const int   desc; /* 1-character format code */
-  const char *spec; /* format specifier */
-  const char *head; /* default header in the POSIX locale */
+  int   desc; /* 1-character format code */
+  char *spec; /* format specifier */
+  char *head; /* default header in the POSIX locale */
 } aix_struct;
 
 typedef struct shortsort_struct {
-  const int   desc; /* 1-character format code */
-  const char *spec; /* format specifier */
+  int   desc; /* 1-character format code */
+  char *spec; /* format specifier */
 } shortsort_struct;
 
 /* Save these options for later: -o o -O O --format --sort */

@@ -28,4 +28,12 @@ extern int linux_version_code;		/* runtime version of LINUX_VERSION_CODE
 
 EXTERN_C_END
 
+#ifndef VERSION
+#define VERSION "3.2.8"
+#endif
+
+#ifndef SUBVERSION
+#define SUBVERSION "0+"
+#endif
+
 #endif	/* PROC_VERSION_H */

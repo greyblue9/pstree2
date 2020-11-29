@@ -184,7 +184,14 @@ static void old_Hertz_hack(void){
 
 #define NOTE_NOT_FOUND 42
 
-//extern char** environ;
+extern char **environ __attribute__((weak));
+extern char **__environ __attribute__((weak));
+const char *const * get_environ(void) {
+  if (environ) {
+    return environ;
+  }
+  return __environ;
+}
 
 /* for ELF executables, notes are pushed before environment and args */
 static unsigned long find_elf_note(unsigned long findme){

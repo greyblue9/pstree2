@@ -31,7 +31,12 @@
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
+
+// prevent waitflags.h from defining conflicting enumerator P_PPID
+// (which is included by <stdlib.h>)
+#define __ENUM_IDTYPE_T 1
 #include <stdlib.h>
+
 #include <string.h>
 
 // Foul POS defines all sorts of stuff...
@@ -3114,9 +3119,9 @@ static void task_show (const WIN_t *q, const proc_t *p)
          case P_PID:
             MKCOL((unsigned)p->XXXID);
             break;
-         case P_PPD:
-            MKCOL((unsigned)p->ppid);
-            break;
+//       case P_PPD:
+//          MKCOL((unsigned)p->ppid);
+//          break;
          case P_PRI:
             if (unlikely(-99 > p->priority) || unlikely(999 < p->priority)) {
                f = "  RT";

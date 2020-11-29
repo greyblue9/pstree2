@@ -56,8 +56,9 @@
 
 ///////////////////////////////////////////////////////
 #ifdef __linux__
-#include <asm/param.h>  /* HZ */
-#include <asm/page.h>   /* PAGE_SIZE */
+#include <unistd.h>
+
+
 #define NO_TTY_VALUE DEV_ENCODE(0,0)
 #ifndef HZ
 #warning HZ not defined, assuming it is 100
@@ -67,11 +68,14 @@
 
 ///////////////////////////////////////////////////////////
 
-#ifndef PAGE_SIZE
-#warning PAGE_SIZE not defined, assuming it is 4096
-#define PAGE_SIZE 4096
-#endif
 
+const int get_page_size() {
+  static int m_page_size;
+  if (!m_page_size) {
+    m_page_size = sysconf(_SC_PAGE_SIZE);
+  }
+  return m_page_size;
+}
 
 
 static char P_tty_text[16];
@@ -492,7 +496,7 @@ static int stat2proc(int pid) {
     );
 /*    fprintf(stderr, "stat2proc converted %d fields.\n",num); */
     P_vsize /= 1024;
-    P_rss *= (PAGE_SIZE/1024);
+    P_rss *= (get_page_size()/1024);
 
     memcpy(P_tty_text, "   ?   ", 8);
     if (P_tty_num != NO_TTY_VALUE) {
@@ -568,7 +572,7 @@ static void print_proc(void){
       "0 %c %5d %5d %5d %s %3d %3d - "
       "%5ld %06x %s %s",
       P_state, P_euid, P_pid, P_ppid, do_cpu(0),
-      (int)P_priority, (int)P_nice, P_vsize/(PAGE_SIZE/1024),
+      (int)P_priority, (int)P_nice, P_vsize/(get_page_size()/1024),
       (unsigned)(P_wchan&0xffffff), P_tty_text, do_time(P_utime+P_stime)
     );
     break;

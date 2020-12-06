@@ -24,7 +24,7 @@ $(builddir)/%.o: $(srcdir)/%.c
 
 $(builddir)/%: $(builddir)/%.o $(OBJECTS)
 	@mkdir -p $(@D)
-	$(CXX) $(LDFLAGS) -o $(firstword $(@)) $(firstword $(^)) -Wl,--start-group,--as-needed $(OBJECTS) -Wl,--end-group" $(LDFLAGS) $(LDLIBS)
+	$(CXX) $(LDFLAGS) -o $(firstword $(@)) $(firstword $(^)) -Wl,--start-group,--as-needed $(OBJECTS) -Wl,--end-group $(LDFLAGS) $(LDLIBS)
 	chmod 0755 $(firstword $(@))
 
    

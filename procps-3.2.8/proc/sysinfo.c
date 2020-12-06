@@ -121,9 +121,16 @@ int uptime(double *restrict uptime_secs, double *restrict idle_secs) {
  * architectures there may be a system call or sysctl() that will work.
  */
 
+const unsigned long long Hertz_default =
+    #if defined (HZ)
+      HZ
+    #else
+      ((sizeof(long) == sizeof(int)) ? 100UL : 1024UL) << 8
+    #endif
+;
 unsigned long long Hertz;
 
-static void old_Hertz_hack(void){
+unsigned long long old_Hertz_hack() {
   unsigned long long user_j, nice_j, sys_j, other_j;  /* jiffies (clock ticks) */
   double up_1, up_2, seconds;
   unsigned long long jiffies;
@@ -163,14 +170,10 @@ static void old_Hertz_hack(void){
   case 1015 ... 1035 :  Hertz = 1024; break; /* Alpha, ia64 */
   case 1180 ... 1220 :  Hertz = 1200; break; /* Alpha */
   default:
-#ifdef HZ
-    Hertz = (unsigned long long)HZ;    /* <asm/param.h> */
-#else
-    /* If 32-bit or big-endian (not Alpha or ia64), assume HZ is 100. */
-    Hertz = (sizeof(long)==sizeof(int) || htons(999)==999) ? 100UL : 1024UL;
-#endif
-    fprintf(stderr, "Unknown HZ value! (%d) Assume %Ld.\n", h, Hertz);
+    Hertz = Hertz_default; // ARM
+    // fprintf(stderr, "Unknown HZ value! (%d) Assume %Ld.\n", h, Hertz);
   }
+  return Hertz;
 }
 
 // same as:   euid != uid || egid != gid
